@@ -34,7 +34,7 @@ public class DBUpdate extends DBCondition implements DBUtils
             {
                 updateValueSQL.append(", ");
             }
-            updateValueSQL.append(String.format("%s = %s", name, updateValueMap.get(name)));
+            updateValueSQL.append(String.format("`%s` = '%s'", name, updateValueMap.get(name)));
         }
         return updateValueSQL.toString();
     }
@@ -56,6 +56,6 @@ public class DBUpdate extends DBCondition implements DBUtils
         String updateValueSQL = generateValueSQL();
         String updateConditionSQL = generateConditionSQL();
 
-        return String.format("UPDATE %s SET %s %s", tableName, updateValueSQL, updateConditionSQL);
+        return String.format("UPDATE `%s` SET %s %s", tableName, updateValueSQL, updateConditionSQL);
     }
 }

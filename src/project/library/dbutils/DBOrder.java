@@ -21,8 +21,8 @@ class DBOrder
     {
         if (isReverse)
         {
-            return String.format("%s DESC", name);
+            return String.format("`%s` DESC", name);
         }
-        return String.format("%s ASC", name);
+        return String.format("`%s` ASC", name);
     }
 }

@@ -61,13 +61,13 @@ public class DBQuery extends DBCondition implements DBUtils
         }
         StringBuilder selectNameSQL = new StringBuilder();
 
-        for (String value : selectNameList)
+        for (String name : selectNameList)
         {
             if (!selectNameSQL.isEmpty())
             {
                 selectNameSQL.append(", ");
             }
-            selectNameSQL.append(value);
+            selectNameSQL.append(String.format("`%s`", name));
         }
         return selectNameSQL.toString();
     }
@@ -108,7 +108,7 @@ public class DBQuery extends DBCondition implements DBUtils
         {
             return "";
         }
-        return String.format("GROUP BY %s", groupName);
+        return String.format("GROUP BY `%s`", groupName);
     }
 
     public String generateSQL() throws GenerateException
@@ -122,6 +122,6 @@ public class DBQuery extends DBCondition implements DBUtils
         String orderSQL = generateOrderSQL();
         String groupSQL = generateGroupSQL();
 
-        return String.format("%s FROM %s %s %s %s", selectSQL, tableName, conditionSQL, orderSQL, groupSQL);
+        return String.format("%s FROM `%s` %s %s %s", selectSQL, tableName, conditionSQL, orderSQL, groupSQL);
     }
 }

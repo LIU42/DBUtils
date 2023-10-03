@@ -17,15 +17,15 @@ class DBRange
     {
         if (minValue != null && maxValue != null)
         {
-            return String.format("(%s BETWEEN %s AND %s)", name, minValue, maxValue);
+            return String.format("(`%s` BETWEEN '%s' AND '%s')", name, minValue, maxValue);
         }
         if (minValue != null)
         {
-            return String.format("(%s >= %s)", name, minValue);
+            return String.format("(`%s` >= '%s')", name, minValue);
         }
         if (maxValue != null)
         {
-            return String.format("(%s <= %s)", name, maxValue);
+            return String.format("(`%s` <= '%s')", name, maxValue);
         }
         throw new GenerateException("Range bounds is empty!");
     }

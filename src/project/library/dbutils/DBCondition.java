@@ -54,7 +54,7 @@ abstract class DBCondition extends DBTable
             {
                 updateConditionItemSQL.append(" OR ");
             }
-            updateConditionItemSQL.append(String.format("%s = %s", name, value));
+            updateConditionItemSQL.append(String.format("`%s` = '%s'", name, value));
         }
         return String.format("(%s)", updateConditionItemSQL);
     }

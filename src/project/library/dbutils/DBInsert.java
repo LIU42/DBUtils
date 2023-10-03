@@ -44,9 +44,9 @@ public class DBInsert extends DBTable implements DBUtils
                 insertNameSQL.append(", ");
                 insertValueSQL.append(", ");
             }
-            insertNameSQL.append(name);
-            insertValueSQL.append(insertValueMap.get(name));
+            insertNameSQL.append(String.format("`%s`", name));
+            insertValueSQL.append(String.format("'%s'", insertValueMap.get(name)));
         }
-        return String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, insertNameSQL, insertValueSQL);
+        return String.format("INSERT INTO `%s` (%s) VALUES (%s)", tableName, insertNameSQL, insertValueSQL);
     }
 }

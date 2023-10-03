@@ -22,6 +22,6 @@ public class DBDelete extends DBCondition implements DBUtils
         {
             throw new GenerateException("Delete condition is empty!");
         }
-        return String.format("DELETE FROM %s %s", tableName, generateConditionSQL());
+        return String.format("DELETE FROM `%s` %s", tableName, generateConditionSQL());
     }
 }
