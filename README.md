@@ -33,12 +33,10 @@ query.addValueCondition("name2", "value2");
 query.addRangeCondition("name3", "min", "max");
 
 Connection connection = getConnection();
-Statement statement = connection.createStatement(query.generateSQL());
+Statement statement = connection.createStatement();
 
 // 生成的 SQL 语句
 // SELECT column1, column2 FROM table_name WHERE (name2 = value2) AND (name1 = value1) AND (name3 BETWEEN min AND max)
 
-ResultSet resultSet = statement.executeQuery();
+ResultSet resultSet = statement.executeQuery(query.generateSQL());
 ```
-
-
