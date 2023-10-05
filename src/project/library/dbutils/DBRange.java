@@ -1,6 +1,8 @@
 package project.library.dbutils;
 
-class DBRange
+import java.sql.SQLException;
+
+class DBRange implements DBUtils
 {
     private String name;
     private Object minValue;
@@ -13,7 +15,7 @@ class DBRange
         this.maxValue = maxValue;
     }
 
-    public String generateRangeSQL() throws GenerateException
+    public String generateSQL() throws SQLException
     {
         if (minValue != null && maxValue != null)
         {
@@ -27,6 +29,6 @@ class DBRange
         {
             return String.format("(`%s` <= '%s')", name, maxValue);
         }
-        throw new GenerateException("Range bounds is empty!");
+        throw new SQLException("Range bounds is empty!");
     }
 }

@@ -4,17 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.sql.SQLException;
 
 abstract class DBCondition extends DBTable
 {
     protected Map<String, List<Object>> valueConditionMap;
     protected List<DBRange> rangeConditionList;
+    protected List<DBMatch> matchConditionList;
 
     public DBCondition()
     {
         super();
         this.valueConditionMap = new HashMap<>();
         this.rangeConditionList = new ArrayList<>();
+        this.matchConditionList = new ArrayList<>();
     }
 
     public DBCondition(String tableName)
@@ -22,6 +25,7 @@ abstract class DBCondition extends DBTable
         super(tableName);
         this.valueConditionMap = new HashMap<>();
         this.rangeConditionList = new ArrayList<>();
+        this.matchConditionList = new ArrayList<>();
     }
 
     public void addValueCondition(String name, Object value)
@@ -44,6 +48,11 @@ abstract class DBCondition extends DBTable
         rangeConditionList.add(new DBRange(name, minValue, maxValue));
     }
 
+    public void addMatchCondition(String name, String pattern)
+    {
+        matchConditionList.add(new DBMatch(name, pattern));
+    }
+
     private String generateValueConditionItemSQL(String name)
     {
         StringBuilder updateConditionItemSQL = new StringBuilder();
@@ -59,9 +68,9 @@ abstract class DBCondition extends DBTable
         return String.format("(%s)", updateConditionItemSQL);
     }
 
-    protected String generateConditionSQL() throws GenerateException
+    protected String generateConditionSQL() throws SQLException
     {
-        if (valueConditionMap.isEmpty() && rangeConditionList.isEmpty())
+        if (valueConditionMap.isEmpty() && rangeConditionList.isEmpty() && matchConditionList.isEmpty())
         {
             return "";
         }
@@ -81,7 +90,15 @@ abstract class DBCondition extends DBTable
             {
                 updateConditionSQL.append(" AND ");
             }
-            updateConditionSQL.append(range.generateRangeSQL());
+            updateConditionSQL.append(range.generateSQL());
+        }
+        for (DBMatch match : matchConditionList)
+        {
+            if (!updateConditionSQL.isEmpty())
+            {
+                updateConditionSQL.append(" AND ");
+            }
+            updateConditionSQL.append(match.generateSQL());
         }
         return String.format("WHERE %s", updateConditionSQL);
     }

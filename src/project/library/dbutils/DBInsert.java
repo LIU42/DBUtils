@@ -2,6 +2,7 @@ package project.library.dbutils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.sql.SQLException;
 
 public class DBInsert extends DBTable implements DBUtils
 {
@@ -24,15 +25,15 @@ public class DBInsert extends DBTable implements DBUtils
         insertValueMap.put(name, value);
     }
 
-    public String generateSQL() throws GenerateException
+    public String generateSQL() throws SQLException
     {
         if (tableName == null)
         {
-            throw new GenerateException("Insert table is empty!");
+            throw new SQLException("Insert table is empty!");
         }
         if (insertValueMap.isEmpty())
         {
-            throw new GenerateException("Insert value is empty!");
+            throw new SQLException("Insert value is empty!");
         }
         StringBuilder insertNameSQL = new StringBuilder();
         StringBuilder insertValueSQL = new StringBuilder();

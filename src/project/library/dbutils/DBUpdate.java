@@ -2,6 +2,7 @@ package project.library.dbutils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.sql.SQLException;
 
 public class DBUpdate extends DBCondition implements DBUtils
 {
@@ -39,19 +40,19 @@ public class DBUpdate extends DBCondition implements DBUtils
         return updateValueSQL.toString();
     }
 
-    public String generateSQL() throws GenerateException
+    public String generateSQL() throws SQLException
     {
         if (tableName == null)
         {
-            throw new GenerateException("Update table is empty!");
+            throw new SQLException("Update table is empty!");
         }
         if (updateValueMap.isEmpty())
         {
-            throw new GenerateException("Update value is empty!");
+            throw new SQLException("Update value is empty!");
         }
         if (valueConditionMap.isEmpty())
         {
-            throw new GenerateException("Update condition is empty!");
+            throw new SQLException("Update condition is empty!");
         }
         String updateValueSQL = generateValueSQL();
         String updateConditionSQL = generateConditionSQL();

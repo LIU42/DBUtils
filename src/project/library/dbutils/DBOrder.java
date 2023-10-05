@@ -1,6 +1,6 @@
 package project.library.dbutils;
 
-class DBOrder
+class DBOrder implements DBUtils
 {
     private String name;
     private boolean isReverse;
@@ -17,7 +17,7 @@ class DBOrder
         this.isReverse = isReverse;
     }
 
-    public String generateOrderSQL()
+    public String generateSQL()
     {
         if (isReverse)
         {

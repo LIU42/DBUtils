@@ -2,6 +2,7 @@ package project.library.dbutils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.SQLException;
 
 public class DBQuery extends DBCondition implements DBUtils
 {
@@ -97,7 +98,7 @@ public class DBQuery extends DBCondition implements DBUtils
             {
                 orderItemSQL.append(", ");
             }
-            orderItemSQL.append(orderItem.generateOrderSQL());
+            orderItemSQL.append(orderItem.generateSQL());
         }
         return String.format("ORDER BY %s", orderItemSQL);
     }
@@ -111,11 +112,11 @@ public class DBQuery extends DBCondition implements DBUtils
         return String.format("GROUP BY `%s`", groupName);
     }
 
-    public String generateSQL() throws GenerateException
+    public String generateSQL() throws SQLException
     {
         if (tableName == null)
         {
-            throw new GenerateException("Query table is empty!");
+            throw new SQLException("Query table is empty!");
         }
         String conditionSQL = generateConditionSQL();
         String selectSQL = generateSelectSQL();

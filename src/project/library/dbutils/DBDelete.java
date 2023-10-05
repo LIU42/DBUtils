@@ -1,5 +1,7 @@
 package project.library.dbutils;
 
+import java.sql.SQLException;
+
 public class DBDelete extends DBCondition implements DBUtils
 {
     public DBDelete()
@@ -12,15 +14,15 @@ public class DBDelete extends DBCondition implements DBUtils
         super(tableName);
     }
 
-    public String generateSQL() throws GenerateException
+    public String generateSQL() throws SQLException
     {
         if (tableName == null)
         {
-            throw new GenerateException("Delete table is empty!");
+            throw new SQLException("Delete table is empty!");
         }
         if (valueConditionMap.isEmpty())
         {
-            throw new GenerateException("Delete condition is empty!");
+            throw new SQLException("Delete condition is empty!");
         }
         return String.format("DELETE FROM `%s` %s", tableName, generateConditionSQL());
     }
