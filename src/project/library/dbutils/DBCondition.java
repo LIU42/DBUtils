@@ -8,98 +8,95 @@ import java.sql.SQLException;
 
 abstract class DBCondition extends DBTable
 {
-    protected Map<String, List<Object>> valueConditionMap;
-    protected List<DBRange> rangeConditionList;
-    protected List<DBMatch> matchConditionList;
+    protected Map<String, List<DBUtils>> valueConditionMap;
+    protected Map<String, List<DBUtils>> rangeConditionMap;
+    protected Map<String, List<DBUtils>> matchConditionMap;
 
     public DBCondition()
     {
         super();
         this.valueConditionMap = new HashMap<>();
-        this.rangeConditionList = new ArrayList<>();
-        this.matchConditionList = new ArrayList<>();
+        this.rangeConditionMap = new HashMap<>();
+        this.matchConditionMap = new HashMap<>();
     }
 
     public DBCondition(String tableName)
     {
         super(tableName);
         this.valueConditionMap = new HashMap<>();
-        this.rangeConditionList = new ArrayList<>();
-        this.matchConditionList = new ArrayList<>();
+        this.rangeConditionMap = new HashMap<>();
+        this.matchConditionMap = new HashMap<>();
+    }
+
+    private void addConditionItem(Map<String, List<DBUtils>> conditionMap, String name, DBUtils dataItem)
+    {
+        if (conditionMap.containsKey(name))
+        {
+            conditionMap.get(name).add(dataItem);
+        }
+        else
+        {
+            List<DBUtils> dataItemList = new ArrayList<>();
+
+            dataItemList.add(dataItem);
+            conditionMap.put(name, dataItemList);
+        }
     }
 
     public void addValueCondition(String name, Object value)
     {
-        if (valueConditionMap.containsKey(name))
-        {
-            valueConditionMap.get(name).add(value);
-        }
-        else
-        {
-            List<Object> valueList = new ArrayList<>();
-
-            valueList.add(value);
-            valueConditionMap.put(name, valueList);
-        }
+        addConditionItem(valueConditionMap, name, new DBValue(name, value));
     }
 
     public void addRangeCondition(String name, Object minValue, Object maxValue)
     {
-        rangeConditionList.add(new DBRange(name, minValue, maxValue));
+        addConditionItem(valueConditionMap, name, new DBRange(name, minValue, maxValue));
     }
 
     public void addMatchCondition(String name, String pattern)
     {
-        matchConditionList.add(new DBMatch(name, pattern));
+        addConditionItem(valueConditionMap, name, new DBMatch(name, pattern));
     }
 
-    private String generateValueConditionItemSQL(String name)
+    private String generateConditionItemSQL(Map<String, List<DBUtils>> conditionMap, String name) throws SQLException
     {
-        StringBuilder updateConditionItemSQL = new StringBuilder();
+        StringBuilder conditionItemSQL = new StringBuilder();
 
-        for (Object value : valueConditionMap.get(name))
+        for (DBUtils dataItem : conditionMap.get(name))
         {
-            if (!updateConditionItemSQL.isEmpty())
+            if (!conditionItemSQL.isEmpty())
             {
-                updateConditionItemSQL.append(" OR ");
+                conditionItemSQL.append(" OR ");
             }
-            updateConditionItemSQL.append(String.format("`%s` = '%s'", name, value));
+            conditionItemSQL.append(dataItem.generateSQL());
         }
-        return String.format("(%s)", updateConditionItemSQL);
+        return String.format("(%s)", conditionItemSQL);
+    }
+
+    private void generateConditionTypeSQL(StringBuilder conditionSQL, Map<String, List<DBUtils>> conditionMap) throws SQLException
+    {
+        for (String name : conditionMap.keySet())
+        {
+            if (!conditionSQL.isEmpty())
+            {
+                conditionSQL.append(" AND ");
+            }
+            conditionSQL.append(generateConditionItemSQL(conditionMap, name));
+        }
     }
 
     protected String generateConditionSQL() throws SQLException
     {
-        if (valueConditionMap.isEmpty() && rangeConditionList.isEmpty() && matchConditionList.isEmpty())
+        if (valueConditionMap.isEmpty() && rangeConditionMap.isEmpty() && matchConditionMap.isEmpty())
         {
             return "";
         }
-        StringBuilder updateConditionSQL = new StringBuilder();
-   
-        for (String name : valueConditionMap.keySet())
-        {
-            if (!updateConditionSQL.isEmpty())
-            {
-                updateConditionSQL.append(" AND ");
-            }
-            updateConditionSQL.append(generateValueConditionItemSQL(name));
-        }
-        for (DBRange range : rangeConditionList)
-        {
-            if (!updateConditionSQL.isEmpty())
-            {
-                updateConditionSQL.append(" AND ");
-            }
-            updateConditionSQL.append(range.generateSQL());
-        }
-        for (DBMatch match : matchConditionList)
-        {
-            if (!updateConditionSQL.isEmpty())
-            {
-                updateConditionSQL.append(" AND ");
-            }
-            updateConditionSQL.append(match.generateSQL());
-        }
-        return String.format("WHERE %s", updateConditionSQL);
+        StringBuilder conditionSQL = new StringBuilder();
+
+        generateConditionTypeSQL(conditionSQL, valueConditionMap);
+        generateConditionTypeSQL(conditionSQL, rangeConditionMap);
+        generateConditionTypeSQL(conditionSQL, matchConditionMap);
+
+        return String.format("WHERE %s", conditionSQL);
     }
 }

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DBInsert extends DBTable implements DBUtils
 {
-    private Map<String, Object> insertValueMap;
+    private Map<String, DBValue> insertValueMap;
 
     public DBInsert()
     {
@@ -22,7 +22,7 @@ public class DBInsert extends DBTable implements DBUtils
 
     public void addInsertValue(String name, Object value)
     {
-        insertValueMap.put(name, value);
+        insertValueMap.put(name, new DBValue(name, value));
     }
 
     public String generateSQL() throws SQLException
@@ -40,13 +40,15 @@ public class DBInsert extends DBTable implements DBUtils
 
         for (String name : insertValueMap.keySet())
         {
+            DBValue dataValue = insertValueMap.get(name);
+
             if (!insertNameSQL.isEmpty() && !insertValueSQL.isEmpty())
             {
                 insertNameSQL.append(", ");
                 insertValueSQL.append(", ");
             }
-            insertNameSQL.append(String.format("`%s`", name));
-            insertValueSQL.append(String.format("'%s'", insertValueMap.get(name)));
+            insertNameSQL.append(String.format("`%s`", dataValue.getName()));
+            insertValueSQL.append(String.format("'%s'", dataValue.getValue()));
         }
         return String.format("INSERT INTO `%s` (%s) VALUES (%s)", tableName, insertNameSQL, insertValueSQL);
     }

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DBUpdate extends DBCondition implements DBUtils
 {
-    private Map<String, Object> updateValueMap;
+    private Map<String, DBValue> updateValueMap;
 
     public DBUpdate()
     {
@@ -22,10 +22,10 @@ public class DBUpdate extends DBCondition implements DBUtils
 
     public void addUpdateValue(String name, Object value)
     {
-        updateValueMap.put(name, value);
+        updateValueMap.put(name, new DBValue(name, value));
     }
 
-    private String generateValueSQL()
+    private String generateValueSQL() throws SQLException
     {
         StringBuilder updateValueSQL = new StringBuilder();
 
@@ -35,7 +35,7 @@ public class DBUpdate extends DBCondition implements DBUtils
             {
                 updateValueSQL.append(", ");
             }
-            updateValueSQL.append(String.format("`%s` = '%s'", name, updateValueMap.get(name)));
+            updateValueSQL.append(updateValueMap.get(name).generateSQL());
         }
         return updateValueSQL.toString();
     }
