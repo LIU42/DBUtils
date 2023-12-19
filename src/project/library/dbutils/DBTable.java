@@ -1,26 +1,22 @@
 package project.library.dbutils;
 
-abstract class DBTable
-{
+abstract class DBTable {
+    
     protected String tableName;
 
-    public DBTable()
-    {
+    public DBTable() {
         this.tableName = null;
     }
 
-    public DBTable(String tableName)
-    {
+    public DBTable(String tableName) {
         this.tableName = tableName;
     }
 
-    public void setTableName(String tableName)
-    {
+    public void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
-    public String getTableName()
-    {
+    public String getTableName() {
         return tableName;
     }
 }
